@@ -1,5 +1,5 @@
 @extends('layout.main')
-@section('title', 'ضافة قسم جديد ')
+@section('title', 'تعديل الحساب')
 @section('css')
 @section('content')
 
@@ -7,8 +7,12 @@
         <!--begin::Container-->
         <div id="kt_content_container" class="container-xxl">
 
-            <form class="form d-flex flex-column flex-lg-row" id="create-form">
-                <!--begin::Aside column-->
+
+            <form class="form d-flex flex-column flex-lg-row" id="create-form"
+            action="{{ route('changes.update', Auth::user()->id) }}" method="post">
+
+                @csrf
+                @method('put')
 
 
                 <!--end::Aside column-->
@@ -27,19 +31,42 @@
                                     <!--begin::Card header-->
                                     <div class="card-header">
                                         <div class="card-title">
-                                            <h2>اضافة قسم جديد   </h2>
+                                            <h2>تعديل  الحساب الخاص في {{ Auth::user()->name}}</h2>
                                         </div>
                                     </div>
-
+                                    @if (count($errors))
+                                    @foreach ($errors->all() as $error)
+                                      <p class="alert alert-danger">{{$error}}</p>
+                                    @endforeach
+                                   @endif
                                     <div class="container">
                                         <div class="row">
-                                            <div class="col-md-4 col-sm-12 mt-8">
 
-                                                <label for="title" class="form-label required"> الاسم </label>
-                                                <input type="text" class="form-control form-control-solid" id="name"
-                                                    name="name">
+                                            <div class="col-md-12 col-sm-12 mt-8">
+                                                <input type="hidden" disabled value="{{ Auth::user()->id}}" class="form-control form-control-solid"
+                                                   id="id"  name="id">
                                             </div>
+                                            <div class="col-md-12 col-sm-12 mt-8">
 
+                                                <label for="title" class="form-label required"> الايميل </label>
+                                                <input type="text" disabled value="{{ Auth::user()->email}}" class="form-control form-control-solid"
+                                                    >
+                                            </div>
+                                            <div class="col-md-12 col-sm-12 mt-8">
+
+                                                <label for="title" class="form-label required"> كلمة السر السابقة </label>
+                                                <input type="password" class="form-control form-control-solid"  id="old_password" name="old_password">
+                                            </div>
+                                            <div class="col-md-12 col-sm-12 mt-8">
+
+                                                <label for="title" class="form-label required">  كلمة السر الجديدة   </label>
+                                                <input type="password" class="form-control form-control-solid"  id="password" name="password">
+                                            </div>
+                                            <div class="col-md-12 col-sm-12 mt-8">
+
+                                                <label for="title" class="form-label required">   تحقق من الكلمة السر الجديدة       </label>
+                                                <input type="password" class="form-control form-control-solid" i id="password_confirmation" name="password_confirmation">
+                                            </div>
 
 
                                         </div>
@@ -63,7 +90,7 @@
                         <!--begin::Button-->
 
 
-                        <button type="button" onclick="store()" class="btn btn-primary">
+                        <button type="submit"   class="btn btn-primary">
                             <span class="indicator-label">حفظ</span>
                             <span class="indicator-progress">Please wait...
                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
@@ -92,7 +119,7 @@
     <script>
         function store() {
             let formData = new FormData($('#create-form')[0]);
-            axios.post('/dashboard/categories', formData, {
+            axios.post('/dashboard/resetPassword', formData, {
             }).then(function (response) {
                 console.log(response);
                 toastr.success(response.data.message);
